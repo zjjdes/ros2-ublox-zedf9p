@@ -54,6 +54,8 @@
 #include <ublox_msgs/msg/nav_clock.hpp>
 #include <ublox_msgs/msg/nav_posecef.hpp>
 #include <ublox_msgs/msg/nav_status.hpp>
+#include <ublox_msgs/msg/rxm_rawx.hpp>
+#include <ublox_msgs/msg/rxm_sfrbx.hpp>
 
 #include <ublox_gps/adr_udr_product.hpp>
 #include <ublox_gps/fix_diagnostic.hpp>
@@ -480,6 +482,12 @@ void UbloxNode::getRosParams() {
   if (getRosBoolean(this, "publish.aid.hui")) {
     aid_hui_pub_ = this->create_publisher<ublox_msgs::msg::AidHUI>("aidhui", 1);
   }
+  if (getRosBoolean(this, "publish.rxm.sfrb")) {
+    rxm_sfrb_pub_ = this->create_publisher<ublox_msgs::msg::RxmSFRBX>("rxmsfrb", 1);
+  }
+  if (getRosBoolean(this, "publish.rxm.raw")) {
+    rxm_raw_pub_ = this->create_publisher<ublox_msgs::msg::RxmRAWX>("rxmraw", 1);
+  }
 }
 
 void UbloxNode::keepAlive() {
@@ -587,6 +595,17 @@ void UbloxNode::subscribe() {
   if (getRosBoolean(this, "publish.aid.hui")) {
     gps_->subscribe<ublox_msgs::msg::AidHUI>([this](const ublox_msgs::msg::AidHUI &m) { aid_hui_pub_->publish(m); },
                                         1);
+  }
+
+  // RXM messages
+  if (getRosBoolean(this, "publish.rxm.sfrb")) {
+    gps_->subscribe<ublox_msgs::msg::RxmSFRBX>([this](const ublox_msgs::msg::RxmSFRBX &m) { rxm_sfrb_pub_->publish(m); },
+                                         1);
+  }
+
+  if (getRosBoolean(this, "publish.rxm.raw")) {
+    gps_->subscribe<ublox_msgs::msg::RxmRAWX>([this](const ublox_msgs::msg::RxmRAWX &m) { rxm_raw_pub_->publish(m); },
+                                         1);
   }
 
   for (const std::shared_ptr<ComponentInterface> & component : components_) {
