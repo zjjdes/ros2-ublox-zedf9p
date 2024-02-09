@@ -9,6 +9,8 @@
 
 #include <ublox_msgs/msg/cfg_dgnss.hpp>
 #include <ublox_msgs/msg/nav_relposned.hpp>
+#include <ublox_msgs/msg/rxm_rawx.hpp>
+#include <ublox_msgs/msg/rxm_sfrbx.hpp>
 
 #include <ublox_gps/gps.hpp>
 #include <ublox_gps/hpg_rov_product.hpp>
@@ -26,6 +28,14 @@ HpgRovProduct::HpgRovProduct(uint16_t nav_rate, std::shared_ptr<diagnostic_updat
   if (getRosBoolean(node_, "publish.nav.relposned")) {
     nav_rel_pos_ned_pub_ =
       node_->create_publisher<ublox_msgs::msg::NavRELPOSNED>("navrelposned", 1);
+  }
+
+  if (getRosBoolean(node_, "publish.rxm.sfrb")) {
+    rxm_sfrb_pub_ = node_->create_publisher<ublox_msgs::msg::RxmSFRBX>("rxmsfrb", 1);
+  }
+
+  if (getRosBoolean(node_, "publish.rxm.raw")) {
+    rxm_raw_pub_ = node_->create_publisher<ublox_msgs::msg::RxmRAWX>("rxmraw", 1);
   }
 }
 
@@ -47,6 +57,18 @@ void HpgRovProduct::subscribe(std::shared_ptr<ublox_gps::Gps> gps) {
   // Subscribe to Nav Relative Position NED messages (also updates diagnostics)
   gps->subscribe<ublox_msgs::msg::NavRELPOSNED>(std::bind(
      &HpgRovProduct::callbackNavRelPosNed, this, std::placeholders::_1), 1);
+
+  // Subscribe to SFRBX messages
+  if (getRosBoolean(node_, "publish.rxm.sfrb")) {
+    gps->subscribe<ublox_msgs::msg::RxmSFRBX>([this](const ublox_msgs::msg::RxmSFRBX &m) { rxm_sfrb_pub_->publish(m); },
+                                         1);
+  }
+
+  // Subscribe to RawX messages
+  if (getRosBoolean(node_, "publish.rxm.raw")) {
+    gps->subscribe<ublox_msgs::msg::RxmRAWX>([this](const ublox_msgs::msg::RxmRAWX &m) { rxm_raw_pub_->publish(m); },
+                                         1);
+  }
 }
 
 void HpgRovProduct::initializeRosDiagnostics() {

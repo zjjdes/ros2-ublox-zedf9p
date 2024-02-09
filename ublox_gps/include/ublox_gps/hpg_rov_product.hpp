@@ -6,6 +6,8 @@
 #include <diagnostic_updater/diagnostic_updater.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include <ublox_msgs/msg/rxm_rawx.hpp>
+#include <ublox_msgs/msg/rxm_sfrbx.hpp>
 #include <ublox_msgs/msg/nav_relposned.hpp>
 
 #include <ublox_gps/component_interface.hpp>
@@ -84,6 +86,8 @@ class HpgRovProduct final : public virtual ComponentInterface {
   std::unique_ptr<UbloxTopicDiagnostic> freq_rtcm_;
 
   rclcpp::Publisher<ublox_msgs::msg::NavRELPOSNED>::SharedPtr nav_rel_pos_ned_pub_;
+  rclcpp::Publisher<ublox_msgs::msg::RxmSFRBX>::SharedPtr rxm_sfrb_pub_;
+  rclcpp::Publisher<ublox_msgs::msg::RxmRAWX>::SharedPtr rxm_raw_pub_;
 
   uint16_t nav_rate_;
   std::shared_ptr<diagnostic_updater::Updater> updater_;

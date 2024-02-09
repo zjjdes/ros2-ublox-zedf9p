@@ -11,6 +11,8 @@
 
 #include <ublox_msgs/msg/cfg_tmode3.hpp>
 #include <ublox_msgs/msg/nav_svin.hpp>
+#include <ublox_msgs/msg/rxm_rawx.hpp>
+#include <ublox_msgs/msg/rxm_sfrbx.hpp>
 
 #include <ublox_gps/hpg_ref_product.hpp>
 #include <ublox_gps/rtcm.hpp>
@@ -28,6 +30,14 @@ HpgRefProduct::HpgRefProduct(uint16_t nav_rate, uint16_t meas_rate, std::shared_
   if (getRosBoolean(node_, "publish.nav.svin")) {
     navsvin_pub_ =
       node_->create_publisher<ublox_msgs::msg::NavSVIN>("navsvin", 1);
+  }
+
+  if (getRosBoolean(node_, "publish.rxm.sfrb")) {
+    rxm_sfrb_pub_ = node_->create_publisher<ublox_msgs::msg::RxmSFRBX>("rxmsfrb", 1);
+  }
+
+  if (getRosBoolean(node_, "publish.rxm.raw")) {
+    rxm_raw_pub_ = node_->create_publisher<ublox_msgs::msg::RxmRAWX>("rxmraw", 1);
   }
 }
 
@@ -175,6 +185,18 @@ void HpgRefProduct::subscribe(std::shared_ptr<ublox_gps::Gps> gps) {
   gps_ = gps;
   gps->subscribe<ublox_msgs::msg::NavSVIN>(std::bind(
       &HpgRefProduct::callbackNavSvIn, this, std::placeholders::_1), 1);
+
+  // Subscribe to SFRBX messages
+  if (getRosBoolean(node_, "publish.rxm.sfrb")) {
+    gps->subscribe<ublox_msgs::msg::RxmSFRBX>([this](const ublox_msgs::msg::RxmSFRBX &m) { rxm_sfrb_pub_->publish(m); },
+                                         1);
+  }
+
+  // Subscribe to RawX messages
+  if (getRosBoolean(node_, "publish.rxm.raw")) {
+    gps->subscribe<ublox_msgs::msg::RxmRAWX>([this](const ublox_msgs::msg::RxmRAWX &m) { rxm_raw_pub_->publish(m); },
+                                         1);
+  }
 }
 
 void HpgRefProduct::callbackNavSvIn(const ublox_msgs::msg::NavSVIN& m) {

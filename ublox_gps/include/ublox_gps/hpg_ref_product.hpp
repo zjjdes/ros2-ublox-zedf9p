@@ -7,6 +7,8 @@
 #include <diagnostic_updater/diagnostic_updater.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include <ublox_msgs/msg/rxm_rawx.hpp>
+#include <ublox_msgs/msg/rxm_sfrbx.hpp>
 #include <ublox_msgs/msg/nav_svin.hpp>
 
 #include <ublox_gps/component_interface.hpp>
@@ -130,6 +132,8 @@ class HpgRefProduct: public virtual ComponentInterface {
   } mode_{INIT};
 
   rclcpp::Publisher<ublox_msgs::msg::NavSVIN>::SharedPtr navsvin_pub_;
+  rclcpp::Publisher<ublox_msgs::msg::RxmSFRBX>::SharedPtr rxm_sfrb_pub_;
+  rclcpp::Publisher<ublox_msgs::msg::RxmRAWX>::SharedPtr rxm_raw_pub_;
 
   uint16_t nav_rate_;
   uint16_t meas_rate_;
