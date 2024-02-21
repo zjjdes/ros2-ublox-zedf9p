@@ -17,7 +17,8 @@ uint8 gnss_id              # GNSS identifier (see CfgGNSS for constants)
 
 uint8 sv_id                # Satellite identifier (see Satellite Numbering)
 
-uint8 reserved0           # Reserved
+uint8 sig_id               # New style signal identifier (see Signal Identifiers )
+                           # (not supported for protocol versions less than 27.00)
 
 uint8 freq_id              # Only used for GLONASS: This is the frequency
                           # slot + 7 (range from 0 to 13)

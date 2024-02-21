@@ -2486,7 +2486,7 @@ struct UbloxSerializer<ublox_msgs::msg::RxmRAWXMeas_<ContainerAllocator> > {
     stream.next(m.do_mes);
     stream.next(m.gnss_id);
     stream.next(m.sv_id);
-    stream.next(m.reserved0);
+    stream.next(m.sig_id);
     stream.next(m.freq_id);
     stream.next(m.locktime);
     stream.next(m.cno);
@@ -2508,7 +2508,7 @@ struct UbloxSerializer<ublox_msgs::msg::RxmRAWXMeas_<ContainerAllocator> > {
     stream.next(m.do_mes);
     stream.next(m.gnss_id);
     stream.next(m.sv_id);
-    stream.next(m.reserved0);
+    stream.next(m.sig_id);
     stream.next(m.freq_id);
     stream.next(m.locktime);
     stream.next(m.cno);
